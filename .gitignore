@@ -1,0 +1,22 @@
+# Node
+node_modules
+.pnp*
+.npm
+.yarn*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Builds
+.next
+out
+dist
+
+# Env
+.env*
+
+# Misc
+*.DS_Store
