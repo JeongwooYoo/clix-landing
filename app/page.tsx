@@ -3,6 +3,7 @@ import { PushExamplesSection } from "@/components/PushExamplesSection";
 import { AnalyticsSection } from "@/components/AnalyticsSection";
 import { PlatformsSection } from "@/components/PlatformsSection";
 import { DifferentiationSection } from "@/components/DifferentiationSection";
+import { TeamSection } from "@/components/TeamSection";
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       <AnalyticsSection />
       <PlatformsSection className="pb-10" />
       <DifferentiationSection />
+      <TeamSection />
       <section id="get-started" className="mx-auto max-w-6xl px-6 py-24">
         <h2 className="text-2xl font-semibold tracking-tight mb-6">
           Why Clix?
