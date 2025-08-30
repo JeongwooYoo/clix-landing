@@ -1,23 +1,13 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Check,
   Copy,
-  Info,
   Target,
-  FlaskConical,
   Clock,
   BarChart2,
-  Rocket,
   Bell,
-  Languages,
   ShoppingCart,
   Flame,
   Dumbbell,
@@ -240,18 +230,14 @@ function FrameIcon(props: React.SVGProps<SVGSVGElement>) {
   return <Bell {...props} />;
 }
 
-// Tabs definition ---------------------------------------------------------------------------
+// Tabs (trimmed to requested set) -----------------------------------------------------------
 const tabs = [
-  { id: "overview", label: "Overview", icon: Info },
   { id: "targeting", label: "Targeting", icon: Target },
   { id: "trigger", label: "Trigger", icon: Clock },
   { id: "message", label: "Message", icon: Bell },
-  { id: "delivery", label: "Delivery", icon: Rocket },
-  { id: "experiments", label: "Experiments", icon: FlaskConical },
-  { id: "metrics", label: "Metrics", icon: BarChart2 },
 ];
 
-type TabId = (typeof tabs)[number]["id"];
+type TabId = "targeting" | "trigger" | "message";
 
 // NotificationCard sub component ------------------------------------------------------------
 interface NotificationCardProps {
@@ -337,27 +323,7 @@ const NotificationCard = React.forwardRef<
   );
 });
 
-// Helper: code sample generation ------------------------------------------------------------
-function buildCodeSamples(example: PushExample) {
-  const payload = {
-    user_id: "user_123",
-    title: example.title,
-    body: example.body,
-    tokens: example.config.personalizationTokens.split(/[, ]+/).filter(Boolean),
-    trigger: example.config.trigger,
-  };
-  const js = `await fetch('https://api.clix.dev/v1/push', {\n  method: 'POST',\n  headers: {\n    'Authorization': 'Bearer YOUR_API_KEY',\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(${JSON.stringify(
-    payload,
-    null,
-    2
-  )})\n});`;
-  const swift = `let url = URL(string: "https://api.clix.dev/v1/push")!\nvar request = URLRequest(url: url)\nrequest.httpMethod = "POST"\nrequest.addValue("Bearer YOUR_API_KEY", forHTTPHeaderField: "Authorization")\nrequest.addValue("application/json", forHTTPHeaderField: "Content-Type")\nlet body: [String: Any] = ${JSON.stringify(
-    payload,
-    null,
-    2
-  )}\nrequest.httpBody = try! JSONSerialization.data(withJSONObject: body)\nlet task = URLSession.shared.dataTask(with: request) { data, resp, err in\n  // handle\n}\ntask.resume()`;
-  return { js, swift };
-}
+// (Removed code sample generation: not needed after tab simplification)
 
 // Main component ---------------------------------------------------------------------------
 export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
@@ -379,7 +345,8 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
 
   const selectedExample =
     examples.find((e) => e.id === selectedId) || examples[0];
-  const currentTab = tabState[selectedExample.id] || "overview";
+  const currentTab: TabId =
+    (tabState[selectedExample.id] as TabId) || "targeting";
 
   // Keyboard navigation for listbox
   const handleListKey = useCallback(
@@ -412,15 +379,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
     prevSelected.current = selectedId;
   }, [selectedId]);
 
-  // Code samples memo
-  const codeSamples = useMemo(
-    () => buildCodeSamples(selectedExample),
-    [selectedExample]
-  );
-
-  const copy = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => pushToast("Copied"));
-  };
+  // (Removed code samples & copy helper)
 
   const setTab = (id: TabId) =>
     setTabState((s) => ({ ...s, [selectedExample.id]: id }));
@@ -447,7 +406,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
         </div>
         {/* Emoji-only mode now; toggle removed */}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left column: listbox with notifications */}
         <div
           role="listbox"
@@ -486,6 +445,14 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
               "bg-gradient-to-r from-brand-500/5 to-transparent"
             )}
           ></div>
+          {/* Overview always visible */}
+          <div className="mb-6 space-y-4 text-sm" aria-label="Overview">
+            <Field label="Goal">{selectedExample.config.goal}</Field>
+            <Field label="Key Metric">
+              {selectedExample.config.successMetric}
+            </Field>
+          </div>
+          {/* Tabs */}
           <div
             className="flex flex-wrap items-center gap-3 mb-4"
             role="tablist"
@@ -527,12 +494,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
                 : "opacity-100 translate-x-0"
             )}
           >
-            <DetailsContent
-              example={selectedExample}
-              tab={currentTab}
-              codeSamples={codeSamples}
-              onCopy={copy}
-            />
+            <DetailsContent example={selectedExample} tab={currentTab} />
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 border-t border-white/10 pt-4">
             <button
@@ -562,29 +524,6 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
 };
 
 // Details content renderer ------------------------------------------------------
-const Field: React.FC<{
-  label: string;
-  children: React.ReactNode;
-  copyValue?: string;
-}> = ({ label, children, copyValue }) => {
-  return (
-    <div className="group relative">
-      <div className="text-[10px] uppercase tracking-wide text-neutral-500 mb-1 font-medium">
-        {label}
-      </div>
-      <div className="text-sm text-neutral-200/90 leading-relaxed whitespace-pre-wrap break-words pr-8">
-        {children}
-      </div>
-      {copyValue && (
-        <CopyButton
-          value={copyValue}
-          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
-        />
-      )}
-    </div>
-  );
-};
-
 const CopyButton: React.FC<{ value: string; className?: string }> = ({
   value,
   className,
@@ -613,22 +552,35 @@ const CopyButton: React.FC<{ value: string; className?: string }> = ({
   );
 };
 
-const DetailsContent: React.FC<{
-  example: PushExample;
-  tab: TabId;
-  codeSamples: { js: string; swift: string };
-  onCopy: (v: string) => void;
-}> = ({ example, tab, codeSamples, onCopy }) => {
+const Field: React.FC<{
+  label: string;
+  children: React.ReactNode;
+  copyValue?: string;
+}> = ({ label, children, copyValue }) => {
+  return (
+    <div className="group relative">
+      <div className="text-[10px] uppercase tracking-wide text-neutral-500 mb-1 font-medium">
+        {label}
+      </div>
+      <div className="text-sm text-neutral-200/90 leading-relaxed whitespace-pre-wrap break-words pr-8">
+        {children}
+      </div>
+      {copyValue && (
+        <CopyButton
+          value={copyValue}
+          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
+        />
+      )}
+    </div>
+  );
+};
+
+const DetailsContent: React.FC<{ example: PushExample; tab: TabId }> = ({
+  example,
+  tab,
+}) => {
   const c = example.config;
   switch (tab) {
-    case "overview":
-      return (
-        <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="Goal">{c.goal}</Field>
-          <Field label="Summary">{example.body}</Field>
-          <Field label="Key Metric">{c.successMetric}</Field>
-        </div>
-      );
     case "targeting":
       return (
         <div className="space-y-4 text-sm" role="tabpanel">
@@ -664,79 +616,8 @@ const DetailsContent: React.FC<{
           <Field label="Personalization Tokens">
             {c.personalizationTokens}
           </Field>
-          <Field label="Preview">
-            {example.title} – {example.body}
-          </Field>
-        </div>
-      );
-    case "delivery":
-      return (
-        <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="Delivery Type">{c.deliveryType}</Field>
-          <Field label="Timing Window">{c.timing}</Field>
-          <Field label="Fallback Path">{c.fallback}</Field>
-        </div>
-      );
-    case "experiments":
-      return (
-        <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="A/B Test">{c.abTest}</Field>
-          <Field label="Hypothesis">
-            Variant A will outperform Variant B on{" "}
-            {c.successMetric.toLowerCase()}.
-          </Field>
-        </div>
-      );
-    case "metrics":
-      return (
-        <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="Primary Metric">{c.successMetric}</Field>
-          <Field label="Secondary">Open rate, CTR, retention delta</Field>
-          <div className="mt-4 rounded-md bg-neutral-900/50 p-3 border border-white/10">
-            <p className="text-[11px] font-mono text-neutral-400 mb-2">
-              Sample send calls
-            </p>
-            <div className="grid md:grid-cols-2 gap-4">
-              <CodeBlock
-                label="JavaScript"
-                code={codeSamples.js}
-                onCopy={onCopy}
-              />
-              <CodeBlock
-                label="Swift"
-                code={codeSamples.swift}
-                onCopy={onCopy}
-              />
-            </div>
-          </div>
         </div>
       );
   }
 };
-
-const CodeBlock: React.FC<{
-  label: string;
-  code: string;
-  onCopy: (v: string) => void;
-}> = ({ label, code, onCopy }) => {
-  return (
-    <div className="relative">
-      <div className="absolute right-2 top-1 flex gap-2">
-        <button
-          onClick={() => onCopy(code)}
-          className="inline-flex items-center gap-1 rounded bg-white/5 px-2 py-1 text-[10px] text-neutral-300 hover:text-white"
-        >
-          <Copy className="size-3" /> Copy
-        </button>
-      </div>
-      <pre className="overflow-x-auto rounded-sm bg-neutral-950/80 p-3 text-[10px] leading-relaxed text-neutral-300 border border-white/5 font-mono whitespace-pre">
-        <code>{code}</code>
-      </pre>
-      <div className="mt-1 text-[10px] uppercase tracking-wide text-neutral-500">
-        {label}
-      </div>
-    </div>
-  );
-};
-
 export default PushExamplesSection;

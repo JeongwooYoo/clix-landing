@@ -5,6 +5,7 @@ export default function HomePage() {
   return (
     <main className="relative">
       <Hero />
+      <PushExamplesSection className="pb-28" />
       <section id="get-started" className="mx-auto max-w-6xl px-6 py-24">
         <h2 className="text-2xl font-semibold tracking-tight mb-6">
           Why Clix?
@@ -20,7 +21,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      <PushExamplesSection className="pb-28" />
     </main>
   );
 }
