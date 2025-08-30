@@ -23,7 +23,9 @@ import clsx from "clsx";
 export interface PushExampleConfig {
   goal: string;
   audience: string;
-  trigger: string;
+  audienceConditions?: AudienceCondition[]; // structured conditions derived from audience
+  trigger: string; // legacy human readable
+  triggerSpec?: TriggerSpec; // structured trigger definition
   timing: string;
   message: string; // variables description
   personalizationTokens: string;
@@ -33,6 +35,55 @@ export interface PushExampleConfig {
   successMetric: string;
   fallback: string;
 }
+
+export type AudienceCondition =
+  | {
+      type: "attribute";
+      key: string;
+      op: string;
+      value: string | number | boolean;
+      description?: string;
+    }
+  | {
+      type: "event";
+      event: string;
+      op?: string; // e.g. occurredWithin, notOccurredWithin, countGte
+      value?: string | number; // timeframe like 24h or count threshold
+      timeframe?: string; // explicit timeframe window
+      count?: number; // for count comparisons
+      description?: string;
+    };
+
+export type TriggerSpec =
+  | {
+      type: "send_immediately"; // send as soon as conditions met
+      reason?: string;
+    }
+  | {
+      type: "scheduled_message"; // one-off scheduled time per user or global
+      schedule: {
+        at: string; // semantic label or ISO
+        timezone?: string; // if needed
+        perUser?: boolean;
+      };
+    }
+  | {
+      type: "recurring_message"; // repeating schedule
+      recurrence: {
+        pattern: string; // cron-like or semantic (e.g. daily, weekly_sun_10)
+        timezone?: string;
+        windowStart?: string;
+        windowEnd?: string;
+      };
+    }
+  | {
+      type: "event_trigger"; // based on incoming event
+      event: string;
+      delay?: string; // e.g. 30m
+      constraints?: {
+        rateLimit?: string; // e.g. 1/hour/thread
+      };
+    };
 
 export interface PushExample {
   id: string;
@@ -90,7 +141,22 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Recover abandoned carts",
       audience: "Users with items in cart and no purchase in 24 hours",
+      audienceConditions: [
+        { type: "attribute", key: "cart_items_count", op: ">", value: 0 },
+        {
+          type: "event",
+          event: "purchase",
+          op: "notOccurredWithin",
+          value: "24h",
+          description: "No purchase in last 24h",
+        },
+      ],
       trigger: "Server event cart_abandoned",
+      triggerSpec: {
+        type: "event_trigger",
+        event: "cart_abandoned",
+        delay: "30m", // send 30 minutes after last cart activity
+      },
       timing:
         "Send at 30 minutes after last cart activity; local send windows 09–21",
       message: "Variables: first_name, cart_value, discount_code",
@@ -111,7 +177,18 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Daily practice adherence",
       audience: "Learners with active streak >= 2",
+      audienceConditions: [
+        { type: "attribute", key: "streak_days", op: ">=", value: 2 },
+      ],
       trigger: "Scheduled daily job based on user preferred hour",
+      triggerSpec: {
+        type: "recurring_message",
+        recurrence: {
+          pattern: "daily",
+          timezone: "user",
+          windowStart: "preferred_hour",
+        },
+      },
       timing: "Local time preferred_hour; Do not disturb 22–07",
       message: "Variables: first_name, streak_days",
       personalizationTokens: "streak_days",
@@ -132,7 +209,20 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Increase weekly workouts per user",
       audience: "Users with two workouts completed since Monday",
+      audienceConditions: [
+        {
+          type: "event",
+          event: "workout_completed",
+          op: "countGte",
+          count: 2,
+          timeframe: "week_to_date",
+        },
+      ],
       trigger: "Analytics event workout_completed counts per week",
+      triggerSpec: {
+        type: "scheduled_message",
+        schedule: { at: "Friday 17:00-20:00 local", perUser: false },
+      },
       timing: "Send Friday 17–20 local time",
       message: "Variables: first_name, weekly_workout_count",
       personalizationTokens: "weekly_workout_count",
@@ -152,7 +242,19 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Drive quick orders during off peak",
       audience: "Users in delivery zones with low utilization",
+      audienceConditions: [
+        {
+          type: "attribute",
+          key: "low_utilization_zone",
+          op: "==",
+          value: true,
+        },
+      ],
       trigger: "Ops signal low_utilization true",
+      triggerSpec: {
+        type: "event_trigger",
+        event: "low_utilization_zone",
+      },
       timing: "Immediate with expiry 30 minutes",
       message: "Variables: zone_name, promo_end_at",
       personalizationTokens: "zone_name, promo_end_at",
@@ -172,7 +274,15 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Weekly engagement and savings awareness",
       audience: "Active users with connected card",
+      audienceConditions: [
+        { type: "attribute", key: "is_active", op: "==", value: true },
+        { type: "attribute", key: "has_connected_card", op: "==", value: true },
+      ],
       trigger: "Weekly batch compute on Sunday",
+      triggerSpec: {
+        type: "recurring_message",
+        recurrence: { pattern: "weekly_sun_10", timezone: "local" },
+      },
       timing: "Sunday 10:00 local time",
       message: "Variables: first_name, weekly_change_percent, top_category",
       personalizationTokens: "weekly_change_percent, top_category",
@@ -192,7 +302,22 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Bring users back to conversations",
       audience: "Post authors with new comments from non-muted users",
+      audienceConditions: [
+        { type: "attribute", key: "is_post_author", op: "==", value: true },
+        { type: "attribute", key: "commenter_muted", op: "==", value: false },
+        {
+          type: "event",
+          event: "comment_created",
+          op: "occurred",
+          description: "New comment",
+        },
+      ],
       trigger: "Event comment_created",
+      triggerSpec: {
+        type: "event_trigger",
+        event: "comment_created",
+        constraints: { rateLimit: "3/hour/thread" },
+      },
       timing: "Immediate with rate limit per thread",
       message: "Variables: commenter_name, post_title",
       personalizationTokens: "commenter_name",
@@ -212,7 +337,20 @@ const seededExamples: PushExample[] = [
     config: {
       goal: "Increase weekend DAU",
       audience: "Level 10+ who played in the last 14 days",
+      audienceConditions: [
+        { type: "attribute", key: "player_level", op: ">=", value: 10 },
+        {
+          type: "event",
+          event: "session_start",
+          op: "occurredWithin",
+          value: "14d",
+        },
+      ],
       trigger: "Scheduled campaign Friday",
+      triggerSpec: {
+        type: "scheduled_message",
+        schedule: { at: "Friday 18:00", perUser: false },
+      },
       timing: "Friday 18:00 local time",
       message: "Variables: player_level, event_name, reward_multiplier",
       personalizationTokens: "player_level, reward_multiplier",
@@ -291,7 +429,7 @@ const NotificationCard = React.forwardRef<
       onFocus={onFocus}
       tabIndex={active ? 0 : -1}
       className={clsx(
-        "group relative flex w-full flex-col items-start text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950",
+        "group relative flex w-full flex-col items-center text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950",
         active ? "opacity-100" : "opacity-90 hover:opacity-100"
       )}
       data-active={active}
@@ -584,24 +722,153 @@ const DetailsContent: React.FC<{ example: PushExample; tab: TabId }> = ({
     case "targeting":
       return (
         <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="Audience">{c.audience}</Field>
+          <Field label="Audience (Summary)">{c.audience}</Field>
+          {c.audienceConditions && c.audienceConditions.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-[10px] uppercase tracking-wide text-neutral-500 font-medium">
+                Conditions
+              </div>
+              <ul className="space-y-1 text-[12px] text-neutral-300">
+                {c.audienceConditions.map((cond, i) => {
+                  if (cond.type === "attribute") {
+                    return (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="inline-block rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-brand-300 border border-white/10">
+                          attr
+                        </span>
+                        <span className="flex-1">
+                          <code className="font-mono text-xs text-neutral-200">
+                            {cond.key} {cond.op} {String(cond.value)}
+                          </code>
+                          {cond.description && (
+                            <span className="text-neutral-500 ml-2">
+                              {cond.description}
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  }
+                  // event
+                  return (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="inline-block rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-indigo-300 border border-white/10">
+                        event
+                      </span>
+                      <span className="flex-1">
+                        <code className="font-mono text-xs text-neutral-200">
+                          {cond.event}
+                          {cond.op ? `.${cond.op}` : ""}
+                          {cond.value ? `(${cond.value})` : ""}
+                          {cond.count !== undefined
+                            ? ` count>=${cond.count}`
+                            : ""}
+                          {cond.timeframe ? ` in ${cond.timeframe}` : ""}
+                        </code>
+                        {cond.description && (
+                          <span className="text-neutral-500 ml-2">
+                            {cond.description}
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           <Field label="Throttle">{c.throttle}</Field>
-          <Field label="Fallback">{c.fallback}</Field>
         </div>
       );
     case "trigger":
       return (
         <div className="space-y-4 text-sm" role="tabpanel">
-          <Field label="Trigger">{c.trigger}</Field>
-          <Field
-            label="Sample Payload"
-            copyValue={`{\n  \"event\": \"${
-              c.trigger.split(" ")[2] || c.trigger
-            }\",\n  \"user_id\": \"user_123\"\n}`}
-          >{`{ "event": "${
-            c.trigger.split(" ")[2] || c.trigger
-          }", "user_id": "user_123" }`}</Field>
-          <Field label="Timing">{c.timing}</Field>
+          <Field label="Trigger Strategy">
+            {(() => {
+              switch (c.triggerSpec?.type) {
+                case "send_immediately":
+                  return "Send immediately when conditions are met";
+                case "scheduled_message":
+                  return "One-off scheduled send";
+                case "recurring_message":
+                  return "Recurring scheduled send";
+                case "event_trigger":
+                  return "Event-based trigger";
+                default:
+                  return "Unspecified trigger";
+              }
+            })()}
+          </Field>
+          {c.triggerSpec && (
+            <div className="space-y-3">
+              {c.triggerSpec.type === "event_trigger" && (
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase tracking-wide text-neutral-500 font-medium">
+                    Event
+                  </div>
+                  <code className="text-xs font-mono text-neutral-200">
+                    {(c.triggerSpec as any).event}
+                    {(c.triggerSpec as any).delay
+                      ? ` +delay ${(c.triggerSpec as any).delay}`
+                      : ""}
+                  </code>
+                  {(c.triggerSpec as any).constraints?.rateLimit && (
+                    <div className="text-[11px] text-neutral-400">
+                      Rate limit: {(c.triggerSpec as any).constraints.rateLimit}
+                    </div>
+                  )}
+                </div>
+              )}
+              {c.triggerSpec.type === "scheduled_message" && (
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase tracking-wide text-neutral-500 font-medium">
+                    Schedule
+                  </div>
+                  <div className="text-sm text-neutral-300">
+                    {(c.triggerSpec as any).schedule.at}{" "}
+                    {(c.triggerSpec as any).schedule.perUser && (
+                      <span className="text-neutral-500">(per user)</span>
+                    )}
+                  </div>
+                </div>
+              )}
+              {c.triggerSpec.type === "recurring_message" && (
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase tracking-wide text-neutral-500 font-medium">
+                    Recurrence
+                  </div>
+                  <div className="text-xs text-neutral-300">
+                    Pattern: {(c.triggerSpec as any).recurrence.pattern}
+                    {(c.triggerSpec as any).recurrence.windowStart && (
+                      <>
+                        {" "}
+                        • window:{" "}
+                        {(c.triggerSpec as any).recurrence.windowStart}
+                        {(c.triggerSpec as any).recurrence.windowEnd
+                          ? `-${(c.triggerSpec as any).recurrence.windowEnd}`
+                          : ""}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              {c.triggerSpec.type === "send_immediately" && (
+                <div className="text-xs text-neutral-300">Immediate send</div>
+              )}
+            </div>
+          )}
+          {/* Legacy description removed */}
+          {c.triggerSpec?.type === "event_trigger" && (
+            <Field
+              label="Sample Payload"
+              copyValue={`{\n  \"event\": \"${
+                (c.triggerSpec as any).event
+              }\",\n  \"user_id\": \"user_123\"\n}`}
+            >{`{ "event": "${
+              (c.triggerSpec as any).event
+            }", "user_id": "user_123" }`}</Field>
+          )}
+          {/* Timing / Window removed */}
         </div>
       );
     case "message":
