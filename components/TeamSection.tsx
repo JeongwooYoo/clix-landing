@@ -65,11 +65,11 @@ export function TeamSection({ className }: TeamSectionProps) {
           wished existed—developer‑first reliability & clarity from day one.
         </p>
       </div>
-      <div className="grid gap-8 sm:grid-cols-2 mb-20">
+      <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 mb-20">
         {founders.map((f) => (
           <article
             key={f.name}
-            className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm hover:border-white/20 transition"
+            className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6 backdrop-blur-sm hover:border-white/20 transition"
           >
             <div className="flex items-start gap-4">
               <div className="relative">

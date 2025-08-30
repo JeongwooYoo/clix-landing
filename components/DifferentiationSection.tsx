@@ -21,11 +21,11 @@ export function DifferentiationSection({
         <div className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-br from-brand-500/20 via-purple-600/10 to-transparent blur-2xl" />
         <h2
           id="clix-diff-heading"
-          className="relative text-balance font-semibold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-[1.15] overflow-visible"
+          className="relative text-balance font-semibold tracking-tight text-3xl xs:text-4xl sm:text-5xl lg:text-6xl leading-[1.15] overflow-visible"
         >
           <span className="text-neutral-300">Ditch legacy push tools.</span>
           <br className="hidden sm:block" />
-          <span className="text-gradient block mt-8 text-5xl sm:text-6xl lg:text-7xl leading-[1.05] pb-1">
+          <span className="text-gradient block mt-6 sm:mt-8 text-4xl sm:text-6xl lg:text-7xl leading-[1.05] pb-1">
             Grow mobile engagement with an adaptive notification engine.
           </span>
         </h2>

@@ -11,7 +11,7 @@ export function Hero() {
             <span className="h-2 w-2 rounded-full bg-brand-400 animate-pulse" />
             <span>Early access open</span>
           </div>
-          <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
             <span className="text-gradient">Build Duolingo-grade</span>{" "}
             <span className="text-neutral-300">
               push notifications in 5 minutes.

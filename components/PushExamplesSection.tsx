@@ -544,7 +544,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
         </div>
         {/* Emoji-only mode now; toggle removed */}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left column: listbox with notifications */}
         <div
           role="listbox"
@@ -552,7 +552,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
           tabIndex={0}
           onKeyDown={handleListKey}
           ref={listRef}
-          className="flex max-h-[560px] flex-col gap-3 overflow-y-auto pl-3 pr-2 hide-scrollbar overflow-x-visible"
+          className="flex max-h-[560px] flex-col gap-3 overflow-y-auto pl-1 pr-2 sm:pl-3 hide-scrollbar overflow-x-visible"
         >
           {examples.map((ex, i) => (
             <NotificationCard
@@ -573,7 +573,7 @@ export const PushExamplesSection: React.FC<PushExamplesSectionProps> = ({
           aria-live="polite"
           className={clsx(
             "relative rounded-lg border border-white/10 bg-white/[0.02] p-4 md:p-6 overflow-hidden",
-            "min-h-[520px]"
+            "min-h-[420px] sm:min-h-[480px]"
           )}
         >
           <div

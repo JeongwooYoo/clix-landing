@@ -60,7 +60,7 @@ export function AnalyticsSection({ className }: { className?: string }) {
       id="analytics"
       aria-labelledby="analytics-heading"
     >
-      <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div className="mb-12 flex flex-col gap-10 lg:gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-xl">
           <h2
             id="analytics-heading"
@@ -94,10 +94,10 @@ export function AnalyticsSection({ className }: { className?: string }) {
           </ul>
         </div>
         <div className="flex-1 w-full">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-5 shadow-inner shadow-black/40">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-4 sm:p-5 shadow-inner shadow-black/40">
             {/* Conversion mini-sankey bars */}
             <div className="mb-6">
-              <div className="grid grid-cols-4 gap-4 mb-3">
+              <div className="grid grid-cols-2 xs:grid-cols-4 gap-4 mb-3">
                 {funnel.map((f) => {
                   const pct = Math.round((f.value / maxFunnel) * 100);
                   return (
@@ -139,109 +139,111 @@ export function AnalyticsSection({ className }: { className?: string }) {
                   {formatDate(active.date)}
                 </div>
               </div>
-              <svg
-                viewBox={`0 0 ${w} ${h}`}
-                role="img"
-                aria-label="Daily performance line chart"
-                className="w-full max-w-full select-none"
-              >
-                <defs>
-                  <linearGradient id="gradSent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ec4899" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#ec4899" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient
-                    id="gradDelivered"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gradTapped" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                {/* Grid */}
-                {Array.from({ length: 4 }).map((_, i) => {
-                  const y = pad + (i / 3) * (h - pad * 2);
-                  return (
-                    <line
-                      key={i}
-                      x1={pad}
-                      x2={w - pad}
-                      y1={y}
-                      y2={y}
-                      stroke="rgba(255,255,255,0.05)"
-                      strokeWidth={1}
-                    />
-                  );
-                })}
-                <path
-                  d={buildPath("sent")}
-                  fill="none"
-                  stroke="#ec4899"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                />
-                <path
-                  d={buildPath("delivered")}
-                  fill="none"
-                  stroke="#8b5cf6"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                />
-                <path
-                  d={buildPath("tapped")}
-                  fill="none"
-                  stroke="#f59e0b"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                />
-                {/* Hover points */}
-                {DATA.map((p, i) => {
-                  const cx = scaleX(i);
-                  return (
-                    <g key={p.date}>
-                      <circle
-                        cx={cx}
-                        cy={scaleY(p.sent)}
-                        r={hoverIndex === i ? 4 : 3}
-                        fill="#ec4899"
-                        className="transition-all"
+              <div className="w-full overflow-x-auto scrollbar-thin pb-2">
+                <svg
+                  viewBox={`0 0 ${w} ${h}`}
+                  role="img"
+                  aria-label="Daily performance line chart"
+                  className="min-w-[520px] w-full select-none"
+                >
+                  <defs>
+                    <linearGradient id="gradSent" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ec4899" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#ec4899" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient
+                      id="gradDelivered"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="gradTapped" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  {/* Grid */}
+                  {Array.from({ length: 4 }).map((_, i) => {
+                    const y = pad + (i / 3) * (h - pad * 2);
+                    return (
+                      <line
+                        key={i}
+                        x1={pad}
+                        x2={w - pad}
+                        y1={y}
+                        y2={y}
+                        stroke="rgba(255,255,255,0.05)"
+                        strokeWidth={1}
                       />
-                      <circle
-                        cx={cx}
-                        cy={scaleY(p.delivered)}
-                        r={hoverIndex === i ? 4 : 3}
-                        fill="#8b5cf6"
-                        className="transition-all"
-                      />
-                      <circle
-                        cx={cx}
-                        cy={scaleY(p.tapped)}
-                        r={hoverIndex === i ? 4 : 3}
-                        fill="#f59e0b"
-                        className="transition-all"
-                      />
-                      <rect
-                        x={cx - w / DATA.length / 2}
-                        y={0}
-                        width={w / DATA.length}
-                        height={h}
-                        fill="transparent"
-                        className="cursor-pointer"
-                        onMouseEnter={() => setHoverIndex(i)}
-                        onMouseLeave={() => setHoverIndex(null)}
-                        aria-label={`Data for ${p.date}`}
-                      />
-                    </g>
-                  );
-                })}
-              </svg>
+                    );
+                  })}
+                  <path
+                    d={buildPath("sent")}
+                    fill="none"
+                    stroke="#ec4899"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={buildPath("delivered")}
+                    fill="none"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={buildPath("tapped")}
+                    fill="none"
+                    stroke="#f59e0b"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                  />
+                  {/* Hover points */}
+                  {DATA.map((p, i) => {
+                    const cx = scaleX(i);
+                    return (
+                      <g key={p.date}>
+                        <circle
+                          cx={cx}
+                          cy={scaleY(p.sent)}
+                          r={hoverIndex === i ? 4 : 3}
+                          fill="#ec4899"
+                          className="transition-all"
+                        />
+                        <circle
+                          cx={cx}
+                          cy={scaleY(p.delivered)}
+                          r={hoverIndex === i ? 4 : 3}
+                          fill="#8b5cf6"
+                          className="transition-all"
+                        />
+                        <circle
+                          cx={cx}
+                          cy={scaleY(p.tapped)}
+                          r={hoverIndex === i ? 4 : 3}
+                          fill="#f59e0b"
+                          className="transition-all"
+                        />
+                        <rect
+                          x={cx - w / DATA.length / 2}
+                          y={0}
+                          width={w / DATA.length}
+                          height={h}
+                          fill="transparent"
+                          className="cursor-pointer"
+                          onMouseEnter={() => setHoverIndex(i)}
+                          onMouseLeave={() => setHoverIndex(null)}
+                          aria-label={`Data for ${p.date}`}
+                        />
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
               {/* Active stats */}
               <div className="mt-4 grid grid-cols-3 gap-4 text-xs">
                 <Stat label="Sent" value={active.sent} color="text-pink-400" />

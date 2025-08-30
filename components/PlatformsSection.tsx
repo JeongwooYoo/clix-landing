@@ -48,13 +48,17 @@ export function PlatformsSection({ className }: { className?: string }) {
       )}
       aria-labelledby="platforms-heading"
     >
-      <div className="flex flex-col items-start gap-4 mb-8">
+      <div className="flex flex-col items-start gap-3 mb-8">
         <h2
           id="platforms-heading"
           className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-300"
         >
-          Build once. Ship everywhere.
+          Ready for every environment.
         </h2>
+        <p className="text-sm sm:text-base text-neutral-400 max-w-xl">
+          The easiest, most automated push SDK setup—plug in and you&apos;re
+          done.
+        </p>
       </div>
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         {platforms.map((p) => {
