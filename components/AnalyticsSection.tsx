@@ -35,6 +35,12 @@ const maxFunnel = funnel[0].value;
 export function AnalyticsSection({ className }: { className?: string }) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const active = hoverIndex == null ? latest : DATA[hoverIndex];
+  const sankeySteps = funnel.map((f, i) => ({
+    step: i + 1,
+    title: f.label,
+    value: f.value,
+    percentage: Math.round((f.value / maxFunnel) * 100),
+  }));
 
   // Simple line generator (no external deps)
   const pad = 12;
@@ -94,39 +100,106 @@ export function AnalyticsSection({ className }: { className?: string }) {
           </ul>
         </div>
         <div className="flex-1 w-full">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-4 sm:p-5 shadow-inner shadow-black/40">
-            {/* Conversion mini-sankey bars */}
-            <div className="mb-6">
-              <div className="grid grid-cols-2 xs:grid-cols-4 gap-4 mb-3">
-                {funnel.map((f) => {
-                  const pct = Math.round((f.value / maxFunnel) * 100);
-                  return (
-                    <div key={f.label} className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px] text-neutral-400">
-                        <span>{f.label}</span>
-                        <span className="font-mono text-neutral-300">
-                          {pct}%
-                        </span>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-2 sm:p-5 shadow-inner shadow-black/40">
+            {/* Sankey style funnel visualization */}
+            <div className="mb-8">
+              <div className="rounded-lg bg-neutral-900/60 border border-white/10 overflow-hidden">
+                {/* Top labels */}
+                <div className="grid grid-cols-4">
+                  {sankeySteps.map((step, idx) => (
+                    <div
+                      key={step.step}
+                      className={clsx(
+                        "p-2 md:p-5 border-neutral-800/80",
+                        idx < sankeySteps.length - 1 && "border-r"
+                      )}
+                    >
+                      <div className="text-[10px] uppercase tracking-wide text-neutral-500 mb-1">
+                        Step {step.step}
                       </div>
-                      <div className="h-2 rounded bg-neutral-800 overflow-hidden">
-                        <div
-                          className={clsx(
-                            "h-full rounded transition-all",
-                            f.color
-                          )}
-                          style={{ width: pct + "%" }}
-                        />
-                      </div>
-                      <div className="text-[11px] font-mono text-neutral-500">
-                        {f.value.toLocaleString()}
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-neutral-200 text-xs md:text-sm">
+                          {step.title}
+                        </div>
+                        <div className="font-mono text-[11px] text-neutral-400">
+                          {step.percentage}%
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+                {/* Bars */}
+                <div className="relative h-16 md:h-24">
+                  <div className="absolute inset-0 flex">
+                    {sankeySteps.map((step, index) => {
+                      const barHeight = step.percentage;
+                      const nextStep = sankeySteps[index + 1];
+                      const hasConnection = !!nextStep;
+                      const stepWidth = 100 / sankeySteps.length;
+                      return (
+                        <div
+                          key={step.step}
+                          className={clsx(
+                            "relative h-full border-neutral-800/80",
+                            index < sankeySteps.length - 1 && "border-r"
+                          )}
+                          style={{ width: stepWidth + "%" }}
+                        >
+                          {/* Main bar */}
+                          <div
+                            className="absolute bottom-0 left-0 bg-gradient-to-t from-blue-500/80 to-blue-400"
+                            style={{
+                              height: barHeight + "%",
+                              width: hasConnection ? "72%" : "100%",
+                            }}
+                          />
+                          {/* Connection */}
+                          {hasConnection && (
+                            <div
+                              className="absolute bottom-0 bg-blue-700/70"
+                              style={{
+                                left: "72%",
+                                width: "28%",
+                                height:
+                                  Math.max(barHeight, nextStep.percentage) +
+                                  "%",
+                                clipPath: `polygon(0 ${
+                                  100 -
+                                  (barHeight /
+                                    Math.max(barHeight, nextStep.percentage)) *
+                                    100
+                                }%, 100% ${
+                                  100 -
+                                  (nextStep.percentage /
+                                    Math.max(barHeight, nextStep.percentage)) *
+                                    100
+                                }%, 100% 100%, 0 100%)`,
+                              }}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Bottom values */}
+                <div className="grid grid-cols-4 border-t border-neutral-800/80 bg-neutral-950/60">
+                  {sankeySteps.map((step, idx) => (
+                    <div
+                      key={step.step + "-value"}
+                      className={clsx(
+                        "p-3 md:p-4 font-mono text-[11px] md:text-xs text-neutral-300 border-neutral-800/80",
+                        idx < sankeySteps.length - 1 && "border-r"
+                      )}
+                    >
+                      {step.value.toLocaleString()}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <p className="text-[11px] text-neutral-500">
-                Sample anonymized journey: targeted users flowing through each
-                delivery stage.
+              <p className="mt-3 text-[11px] text-neutral-500">
+                Targeted users flowing through each stage. Percentages relative
+                to initial targeted cohort.
               </p>
             </div>
             {/* Line chart */}
