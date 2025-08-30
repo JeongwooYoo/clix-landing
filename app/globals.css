@@ -37,3 +37,14 @@ body {
 /* Hide scrollbar utility (maintain scroll functionality) */
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+@keyframes fade-swap {
+  0% { opacity: 0; transform: translateY(6px); }
+  12% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.animate-fade-swap {
+  animation: fade-swap 2.2s linear forwards;
+}

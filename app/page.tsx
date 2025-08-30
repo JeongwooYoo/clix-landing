@@ -4,12 +4,14 @@ import { AnalyticsSection } from "@/components/AnalyticsSection";
 import { PlatformsSection } from "@/components/PlatformsSection";
 import { DifferentiationSection } from "@/components/DifferentiationSection";
 import { TeamSection } from "@/components/TeamSection";
+import { LovesItSection } from "@/components/LovesItSection";
 
 export default function HomePage() {
   return (
     <main className="relative">
       <Hero />
       <PushExamplesSection className="pb-28 pt-4" />
+      <LovesItSection />
       <AnalyticsSection />
       <PlatformsSection className="pb-10" />
       <DifferentiationSection />
