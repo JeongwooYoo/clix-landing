@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { ArrowRight } from 'react-feather';
+import Link from "next/link";
+import { ArrowRight } from "react-feather";
 
 export function Hero() {
   return (
@@ -12,11 +12,15 @@ export function Hero() {
             <span>Early access open</span>
           </div>
           <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-            <span className="text-gradient">Build Duolingo-grade</span>{' '}
-            <span className="text-neutral-300">push notifications in 5 minutes.</span>
+            <span className="text-gradient">Build Duolingo-grade</span>{" "}
+            <span className="text-neutral-300">
+              push notifications in 5 minutes.
+            </span>
           </h1>
           <p className="mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-neutral-400">
-            Clix gives you an adaptive notification engine: test, personalize, and scale high-retention push campaigns without touching your backend stack.
+            Clix gives you an adaptive notification engine: test, personalize,
+            and scale high-retention push campaigns without touching your
+            backend stack.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
             <Link

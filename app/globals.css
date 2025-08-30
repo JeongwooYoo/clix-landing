@@ -33,3 +33,7 @@ body {
 
 /* Utility for subtle border like Supabase */
 .surface-border { @apply border border-white/5 bg-white/[0.02] backdrop-blur-sm; }
+
+/* Hide scrollbar utility (maintain scroll functionality) */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }

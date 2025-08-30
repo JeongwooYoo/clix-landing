@@ -30,7 +30,7 @@ components/
 public/
   favicon.ico
 tailwind.config.js
-``` 
+```
 
 ## Customization
 
