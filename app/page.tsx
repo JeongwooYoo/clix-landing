@@ -1,11 +1,13 @@
 import { Hero } from "@/components/Hero";
 import { PushExamplesSection } from "@/components/PushExamplesSection";
+import { AnalyticsSection } from "@/components/AnalyticsSection";
 
 export default function HomePage() {
   return (
     <main className="relative">
       <Hero />
       <PushExamplesSection className="pb-28" />
+      <AnalyticsSection />
       <section id="get-started" className="mx-auto max-w-6xl px-6 py-24">
         <h2 className="text-2xl font-semibold tracking-tight mb-6">
           Why Clix?
