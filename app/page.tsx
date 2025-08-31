@@ -2,6 +2,7 @@ import { Hero } from "@/components/Hero";
 import { PushExamplesSection } from "@/components/PushExamplesSection";
 import { AnalyticsSection } from "@/components/AnalyticsSection";
 import { PlatformsSection } from "@/components/PlatformsSection";
+import { DevExperienceSection } from "@/components/DevExperienceSection";
 import { DifferentiationSection } from "@/components/DifferentiationSection";
 import { TeamSection } from "@/components/TeamSection";
 import { LovesItSection } from "@/components/LovesItSection";
@@ -16,6 +17,7 @@ export default function HomePage() {
   <CampaignSection />
       <AnalyticsSection />
       <PlatformsSection className="pb-10" />
+  <DevExperienceSection />
       <DifferentiationSection />
       <TeamSection />
       <section id="get-started" className="mx-auto max-w-6xl px-6 py-24">
