@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -49,6 +49,16 @@ module.exports = {
       backgroundImage: {
         'grid-radial': 'radial-gradient(circle at 50% 50%, rgba(0,196,159,0.25), transparent 60%)',
         'hero-glow': 'radial-gradient(circle at 20% 30%, rgba(0,196,159,0.35), transparent 70%), radial-gradient(circle at 80% 70%, rgba(0,196,159,0.25), transparent 75%)'
+      },
+      keyframes: {
+        'fade-swap': {
+          '0%': { opacity: '0', transform: 'translateY(6px) scale(.97)' },
+          '60%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' }
+        }
+      },
+      animation: {
+        'fade-swap': 'fade-swap .45s cubic-bezier(.16,.8,.3,1) both'
       }
     }
   },

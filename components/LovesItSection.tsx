@@ -38,7 +38,7 @@ export function LovesItSection({ className }: LovesItSectionProps) {
       <div className="relative">
         <h2
           id="loves-it-heading"
-          className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-balance"
+          className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-balance flex items-center"
         >
           <AnimatedRole role={ROLES[index]} />{" "}
           <span className="text-neutral-300">loves it.</span>
@@ -73,12 +73,36 @@ export function LovesItSection({ className }: LovesItSectionProps) {
 }
 
 function AnimatedRole({ role }: { role: string }) {
-  // Simple fade swap using key on role.
+  const [prev, setPrev] = React.useState(role);
+  const [animating, setAnimating] = React.useState(false);
+
+  React.useEffect(() => {
+    if (role !== prev) {
+      setAnimating(true);
+      const timeout = setTimeout(() => {
+        setPrev(role);
+        setAnimating(false);
+      }, 500); // match animation duration
+      return () => clearTimeout(timeout);
+    }
+  }, [role, prev]);
+
   return (
-    <span className="inline-block min-w-[8ch]">
+    <span
+      className="relative inline-block h-[1em] min-w-[8ch] overflow-hidden align-baseline"
+      aria-hidden="true"
+    >
+      {animating && (
+        <span className="absolute inset-0 bg-gradient-to-r from-emerald-700 via-emerald-400 to-teal-300 bg-clip-text text-transparent animate-role-out">
+          {prev}
+        </span>
+      )}
       <span
         key={role}
-        className="inline-block bg-gradient-to-r from-brand-400 via-emerald-400 to-teal-300 bg-clip-text text-transparent animate-fade-swap"
+        className={clsx(
+          "absolute inset-0 bg-gradient-to-r from-emerald-700 via-emerald-400 to-teal-300 bg-clip-text text-transparent",
+          animating ? "animate-role-in" : ""
+        )}
       >
         {role}
       </span>

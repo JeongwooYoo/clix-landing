@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 html, body {
   height: 100%;
@@ -30,10 +28,116 @@ body {
         #050505;
 }
 
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+
+    --color-core-50: var(--core-50);
+    --color-core-100: var(--core-100);
+    --color-core-200: var(--core-200);
+    --color-core-300: var(--core-300);
+    --color-core-400: var(--core-400);
+    --color-core-500: var(--core-500);
+    --color-core-600: var(--core-600);
+    --color-core-700: var(--core-700);
+    --color-core-800: var(--core-800);
+    --color-core-900: var(--core-900);
+    --color-core-950: var(--core-950);
+
+    --color-error: var(--error);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+
+    --text-display: 1.875rem; /* 30px */
+    --text-display--line-height: 2.375rem; /* 38px */
+    --text-display--font-weight: 600;
+
+    --text-title: 1.25rem; /* 20px */
+    --text-title--line-height: 1.75rem; /* 28px */
+    --text-title--font-weight: 600;
+
+    --text-subtitle: 1rem; /* 16px */
+    --text-subtitle--line-height: 1.5rem; /* 24px */
+    --text-subtitle--font-weight: 500;
+
+    --text-body: 0.9375rem; /* 15px */
+    --text-body--line-height: 1.375rem; /* 22px */
+    --text-body--font-weight: 400;
+
+    --text-description: 0.875rem; /* 14px */
+    --text-description--line-height: 1.25rem; /* 20px */
+    --text-description--font-weight: 400;
+
+    --animate-accordion-down: accordion-down 0.2s ease-out;
+    --animate-accordion-up: accordion-up 0.2s ease-out;
+    --animate-fade-in: fade-in 0.2s ease-out;
+
+    @keyframes accordion-down {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--radix-accordion-content-height);
+        }
+    }
+
+    @keyframes accordion-up {
+        from {
+            height: var(--radix-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+
 :root {
     --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
@@ -64,22 +168,23 @@ body {
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
 
-    /* Core neutral scale (light mode) */
-    --core-50: #f9fafb;
-    --core-100: #f3f4f6;
-    --core-200: #e5e7eb;
-    --core-300: #d1d5db;
-    --core-400: #9ca3af;
-    --core-500: #6b7280;
-    --core-600: #4b5563;
-    --core-700: #374151;
-    --core-800: #1f2937;
-    --core-900: #111827;
-    --core-950: #0a0f1a;
+    --core-50: var(--color-neutral-50);
+    --core-100: var(--color-neutral-100);
+    --core-200: var(--color-neutral-200);
+    --core-300: var(--color-neutral-300);
+    --core-400: var(--color-neutral-400);
+    --core-500: var(--color-neutral-500);
+    --core-600: var(--color-neutral-600);
+    --core-700: var(--color-neutral-700);
+    --core-800: var(--color-neutral-800);
+    --core-900: var(--color-neutral-900);
+    --core-950: var(--color-neutral-950);
 
     --error: oklch(0.577 0.245 27.325);
     --success: oklch(0.577 0.15 142);
     --warning: oklch(0.577 0.245 27.325);
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
 }
 
 .dark {
@@ -116,7 +221,6 @@ body {
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
 
-    /* Core neutral scale (dark mode inverted emphasis) */
     --core-50: var(--color-neutral-950);
     --core-100: var(--color-neutral-900);
     --core-200: var(--color-neutral-800);
@@ -133,6 +237,7 @@ body {
     --success: oklch(0.577 0.15 142);
     --warning: oklch(0.577 0.245 27.325);
 }
+
 
 /* Base element tweaks (converted from @layer base) */
 * { border-color: var(--border); }
@@ -171,4 +276,25 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Libe
     padding:0.25rem;
     font-weight:600;
 }
+
+/* Fallback animation for animate-fade-swap (in case Tailwind custom animation not loaded) */
+@keyframes fade-swap {
+    0% { opacity:0; transform: translateY(6px) scale(.96); }
+    55% { opacity:1; transform: translateY(0) scale(1); }
+    100% { opacity:1; transform: translateY(0) scale(1); }
+}
+.animate-fade-swap { animation: fade-swap .45s cubic-bezier(.16,.8,.3,1) both; will-change: opacity, transform; }
+
+/* New vertical swap animations for role text */
+@keyframes role-in {
+    0% { opacity:0; transform: translateY(100%); }
+    60% { opacity:1; }
+    100% { opacity:1; transform: translateY(0); }
+}
+@keyframes role-out {
+    0% { opacity:1; transform: translateY(0); }
+    100% { opacity:0; transform: translateY(-100%); }
+}
+.animate-role-in { animation: role-in .5s cubic-bezier(.16,.8,.3,1); will-change: opacity, transform; }
+.animate-role-out { animation: role-out .5s cubic-bezier(.16,.8,.3,1); will-change: opacity, transform; }
 

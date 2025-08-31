@@ -127,17 +127,48 @@ interface UserProperty {
 const clixInternalClient = {
   listUserPropertyMetadata: async ({ project_id }: { project_id: string }) => {
     // Simulate network latency
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 180));
+    // A more realistic mix of user attributes (string/number/boolean)
     return {
       properties: [
         {
-          name: "favorite_color",
+          name: "country",
+          type: "USER_PROPERTY_TYPE_STRING",
+          value_string: "",
+        },
+        {
+          name: "language",
+          type: "USER_PROPERTY_TYPE_STRING",
+          value_string: "",
+        },
+        {
+          name: "subscription_plan",
           type: "USER_PROPERTY_TYPE_STRING",
           value_string: "",
         },
         {
           name: "sessions_last_7d",
           type: "USER_PROPERTY_TYPE_NUMBER",
+          value_string: "",
+        },
+        {
+          name: "lifetime_sessions",
+          type: "USER_PROPERTY_TYPE_NUMBER",
+          value_string: "",
+        },
+        {
+          name: "last_purchase_at",
+          type: "USER_PROPERTY_TYPE_STRING",
+          value_string: "",
+        },
+        {
+          name: "has_made_purchase",
+          type: "USER_PROPERTY_TYPE_BOOLEAN",
+          value_string: "",
+        },
+        {
+          name: "push_opt_in",
+          type: "USER_PROPERTY_TYPE_BOOLEAN",
           value_string: "",
         },
         {
@@ -388,10 +419,40 @@ export function Step2Audience({
   onPrevious,
 }: Step2AudienceProps = {}) {
   const [campaignData, setCampaignData] = useState<CampaignData>(() => ({
+    // (subscription_plan = pro OR sessions_last_7d >= 3) AND (push_opt_in = true)
     filterGroups: initialCampaignData?.filterGroups || [
-      { id: "1", conditions: [DEFAULT_CONDITION], connector: "AND" },
+      {
+        id: "1",
+        connector: "OR", // intra-group connector between the two conditions
+        conditions: [
+          {
+            field: "subscription_plan",
+            operator:
+              SegmentConditionOperator.SEGMENT_CONDITION_OPERATOR_EQUALS,
+            value: "pro",
+          },
+          {
+            field: "sessions_last_7d",
+            operator:
+              SegmentConditionOperator.SEGMENT_CONDITION_OPERATOR_GREATER_THAN_OR_EQUAL,
+            value: "3",
+          },
+        ],
+      },
+      {
+        id: "2",
+        connector: "AND",
+        conditions: [
+          {
+            field: "push_opt_in",
+            operator:
+              SegmentConditionOperator.SEGMENT_CONDITION_OPERATOR_EQUALS,
+            value: "true",
+          },
+        ],
+      },
     ],
-    groupConnectors: initialCampaignData?.groupConnectors || {},
+    groupConnectors: initialCampaignData?.groupConnectors || { "1-2": "AND" },
   }));
   const [filterGroups, setFilterGroups] = useState<FilterGroup[]>(
     campaignData.filterGroups || []
@@ -739,23 +800,16 @@ export function Step2Audience({
                       <Command>
                         <CommandInput placeholder="Search field name..." />
                         <CommandList>
-                          <CommandEmpty>
-                            <div className="p-2 text-sm text-muted-foreground">
-                              {isLoadingProperties
-                                ? "Loading properties..."
-                                : "No field found"}
-                            </div>
-                          </CommandEmpty>
                           <CommandGroup>
                             {allFields.map((field) => (
                               <CommandItem
                                 key={field.value}
                                 value={field.value}
-                                onClick={() => {
+                                onSelect={(currentValue) => {
                                   updateConditionField(
                                     group.id,
                                     conditionIndex,
-                                    field.value
+                                    currentValue
                                   );
                                   setPopoverOpen(
                                     group.id,

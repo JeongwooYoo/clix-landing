@@ -23,28 +23,22 @@ export function CampaignSection({ className }: { className?: string }) {
             Sky is the limit – Precision audience & timing automation
           </h2>
           <p className="mt-4 text-neutral-400 text-sm leading-relaxed">
-            Send each campaign to the right users at the perfect moment without
-            constraints. Combine behavior, attributes, app version and session
-            patterns to segment; toggle logic live to preview reach before you
-            ship. This demo embeds the actual (mocked) Audience Builder
-            component used in the console.
+            Build a precise push audience in seconds. Mix behavior, attributes,
+            version and activity — and see live reach before you ship. Below is
+            the real (mocked) Audience Builder from the console.
           </p>
           <ul className="mt-6 space-y-3 text-sm text-neutral-300">
             <li className="flex items-start gap-2">
-              <span className="inline-block size-4 mt-0.5 rounded-sm bg-brand-400" />
-              Real component (fully mocked) – no backend needed
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="inline-block size-4 mt-0.5 rounded-sm bg-gradient-to-tr from-pink-500 to-purple-500" />
-              Debounced audience estimate (synthetic)
+              <span className="inline-block size-4 mt-0.5 rounded-sm bg-emerald-500" />
+              Live audience size as you tweak rules
             </li>
             <li className="flex items-start gap-2">
               <span className="inline-block size-4 mt-0.5 rounded-sm bg-amber-500" />
-              AND cluster + OR branching visualization
+              Visual logic: collapse AND blocks, branch with OR
             </li>
             <li className="flex items-start gap-2">
               <span className="inline-block size-4 mt-0.5 rounded-sm bg-blue-500" />
-              Type–aware operators & value inputs
+              Smart operators & inputs based on data type
             </li>
           </ul>
         </div>
