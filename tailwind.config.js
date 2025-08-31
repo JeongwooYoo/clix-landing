@@ -3,7 +3,8 @@ module.exports = {
   darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}'
+  './components/**/*.{js,ts,jsx,tsx,mdx}',
+  './lib/components/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
     extend: {
@@ -30,6 +31,19 @@ module.exports = {
           700: '#007f69',
           800: '#066555',
           900: '#0a5246'
+        },
+        core: {
+          50: 'var(--core-50)',
+          100: 'var(--core-100)',
+            200: 'var(--core-200)',
+            300: 'var(--core-300)',
+            400: 'var(--core-400)',
+            500: 'var(--core-500)',
+            600: 'var(--core-600)',
+            700: 'var(--core-700)',
+            800: 'var(--core-800)',
+            900: 'var(--core-900)',
+            950: 'var(--core-950)'
         }
       },
       backgroundImage: {

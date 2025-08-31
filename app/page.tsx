@@ -5,6 +5,7 @@ import { PlatformsSection } from "@/components/PlatformsSection";
 import { DifferentiationSection } from "@/components/DifferentiationSection";
 import { TeamSection } from "@/components/TeamSection";
 import { LovesItSection } from "@/components/LovesItSection";
+import { CampaignSection } from "@/components/CampaignSection";
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
       <Hero />
       <PushExamplesSection className="pb-28 pt-4" />
       <LovesItSection />
+  <CampaignSection />
       <AnalyticsSection />
       <PlatformsSection className="pb-10" />
       <DifferentiationSection />
