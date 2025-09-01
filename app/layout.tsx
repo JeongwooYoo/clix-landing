@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Clix – Duolingo-grade push notifications in 5 minutes",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <footer className="mt-24 border-t border-white/5 py-10 text-center text-xs text-neutral-500">
           <p>&copy; {new Date().getFullYear()} Clix. All rights reserved.</p>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
