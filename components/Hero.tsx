@@ -24,10 +24,10 @@ export function Hero() {
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
             <Link
-              href="#get-started"
+              href="/waitlist"
               className="group relative inline-flex items-center justify-center gap-2 rounded-md bg-brand-500 px-7 py-3 text-sm font-medium text-white shadow-[0_0_0_0_rgba(0,196,159,0.5)] transition hover:bg-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400"
             >
-              Get Started
+              Join the waitlist
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
