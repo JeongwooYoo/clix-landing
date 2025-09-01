@@ -15,25 +15,25 @@ const platforms: Platform[] = [
   {
     id: "ios",
     name: "iOS",
-    href: "https://docs.clix.dev/ios/install",
+    href: "https://docs.clix.so/sdk-quickstart-ios",
     Icon: FaApple,
   },
   {
     id: "android",
     name: "Android",
-    href: "https://docs.clix.dev/android/install",
+    href: "https://docs.clix.so/sdk-quickstart-android",
     Icon: FaAndroid,
   },
   {
     id: "react-native",
     name: "React Native",
-    href: "https://docs.clix.dev/react-native/install",
+    href: "https://docs.clix.so/sdk-quickstart-react-native",
     Icon: SiReact,
   },
   {
     id: "flutter",
     name: "Flutter",
-    href: "https://docs.clix.dev/flutter/install",
+    href: "https://docs.clix.so/sdk-quickstart-flutter",
     Icon: SiFlutter,
   },
 ];

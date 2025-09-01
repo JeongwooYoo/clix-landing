@@ -31,7 +31,8 @@ export function Hero() {
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
-              href="#docs"
+              href="https://docs.clix.so/"
+              target="_blank"
               className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-7 py-3 text-sm font-medium text-neutral-200 hover:border-white/20 hover:bg-white/[0.05]"
             >
               View Docs
